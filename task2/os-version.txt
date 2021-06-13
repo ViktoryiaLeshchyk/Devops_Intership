@@ -1,0 +1,1 @@
+cat /etc/os-release | sudo tee -a /var/www/html/index.html
