@@ -1,0 +1,4 @@
+python3 -m pip install --user ansible
+python3 -m pip install --user paramiko
+python3 -m pip install --user 'docker-py>=1.7.0'
+python3 -m pip install --user 'docker-compose>=1.7.0'

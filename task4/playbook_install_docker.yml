@@ -1,0 +1,33 @@
+---
+- name: Install Docker
+  become: yes
+  hosts: all
+  remote_user: ec2-user
+
+  tasks:
+  - name: install Docker
+    yum: pkg=docker state=latest
+  - name: enable
+    systemd:
+      name: docker
+      enabled: yes
+  - name: start and enable Docker
+    service: name=docker state=started
+  - name: add ec2-user to docker group for call docker without sudo
+    user:
+      name: ec2-user
+      groups: docker
+      append: yes
+
+- name: Setup SDK for ansible-docker
+  hosts: all
+  remote_user: ec2-user
+
+  tasks:
+  - name: insatll required system packages
+    yum: name={{ item }} state=latest
+    loop: [ 'curl', 'python3-pip', 'python3-setuptools' ]
+
+  - name: Install Docker Module for Python
+    pip: name={{ item }}
+    loop: [ 'docker', 'six' ]
