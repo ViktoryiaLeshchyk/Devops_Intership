@@ -1,0 +1,5 @@
+---
+create_containers: 1
+container_name: docker
+container_image: lampe/minimal-nginx
+#container_command: sleep 1h

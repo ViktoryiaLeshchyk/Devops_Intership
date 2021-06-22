@@ -1,20 +1,40 @@
 ---
 - hosts: drupal_lamp
-  become: yes 
   remote_user: ec2-user
   vars_files:
     - vars/docker_container.yml
 
   tasks:
-    - name: Pull Docker image
-      docker_image:
-        name: "{{ container_image }}"
-        source: pull
+    - name: create network
+      docker_network:
+        name: private
 
-    - name: Create container 
+    - name: Create httpd container
       docker_container:
-        name: "{{ container_name }}{{ item }}"
-        image: "{{ container_image }}"
-        command: "{{ container_command }}"
-        state: present
-      with_sequence: count={{ create_containers }}
+        name: httpd
+        image: httpd
+        restart: yes
+        volumes:
+          - /home/ec2-user/website/:/var/www/html/
+        ports:
+          - "80:80"
+        networks:
+          - name: private
+
+    - name: Create maria_db container
+      docker_container:
+        name: "{{ DB.HOST }}"
+        image: mariadb:10.3
+        restart: yes
+        env:
+          MYSQL_ROOT_PASSWORD: "{{ DB.PASSWORD }}"
+        networks:
+          - name: private
+
+#    - name: Create container
+#      docker_container:
+#        name: "{{ container_name }}{{ item }}"
+#        image: "{{ container_image }}"
+#        command: "{{ container_command }}"
+#        state: present
+#      with_sequence: count={{ create_containers }}
